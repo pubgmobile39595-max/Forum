@@ -1,21 +1,32 @@
+cd /public/forum-app
+
+cat > package.json << 'JSON'
 {
   "name": "forum-app",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Node.js Forum",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "keywords": [],
-  "author": "",
+  "author": "pubgmobile39595-max",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "body-parser": "^2.3.0",
-    "ejs": "^6.0.1",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "marked": "^18.0.14",
-    "sqlite3": "^6.0.1"
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "marked": "^11.0.0",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.7"
   }
 }
+JSON
+
+echo "✅ package.json yazıldı"
+cat package.json
