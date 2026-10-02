@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Paneli</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">👑 Admin</a>
+    <div class="nav-right">
+      <a href="/" class="btn-small">🏠 Forum</a>
+      <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>👑 Admin Paneli</h2>
+
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <b><%= users.length %></b>
+        <span>👥 Kullanıcı</span>
+      </div>
+      <div class="card stat-card">
+        <b><%= postCount %></b>
+        <span>📝 Konu</span>
+      </div>
+      <div class="card stat-card">
+        <b><%= commentCount %></b>
+        <span>💬 Yorum</span>
+      </div>
+      <div class="card stat-card">
+        <b><%= likeCount %></b>
+        <span>❤️ Beğeni</span>
+      </div>
+    </div>
+
+    <h3>👥 Kullanıcı Yönetimi</h3>
+    <div class="card">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Kullanıcı</th><th>Rol</th><th>Durum</th><th>İşlemler</th></tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr>
+              <td><a href="/profile/<%= u.username %>"><%= u.username %></a></td>
+              <td><%= u.role === 'admin' ? '👑 Admin' : '👤 Kullanıcı' %></td>
+              <td><%= u.banned ? '🚫 Yasaklı' : '✅ Aktif' %></td>
+              <td class="actions-cell">
+                <% if (u.username !== user) { %>
+                  <form action="/admin/ban/<%= u.username %>" method="POST" style="display:inline">
+                    <button class="btn-tiny"><%= u.banned ? '✅ Aç' : '🚫 Yasakla' %></button>
+                  </form>
+                  <form action="/admin/role/<%= u.username %>" method="POST" style="display:inline">
+                    <button class="btn-tiny"><%= u.role === 'admin' ? '⬇️ Düşür' : '⬆️ Yönetici' %></button>
+                  </form>
+                  <form action="/admin/delete-user/<%= u.username %>" method="POST" style="display:inline"
+                        onsubmit="return confirm('Bu kullanıcıyı silmek istediğine emin misin?')">
+                    <button class="btn-tiny danger">🗑️</button>
+                  </form>
+                <% } else { %>
+                  <span>-</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

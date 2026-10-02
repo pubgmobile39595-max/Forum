@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= target %> - Uyarılar</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/mod" class="btn-small">👑 Mod</a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/mod" class="back-link">← Mod Panel</a>
+    <h2>⚠️ <%= target %></h2>
+
+    <div class="card profile-header">
+      <% if (userData.avatar) { %>
+        <img src="<%= userData.avatar %>" class="avatar-img">
+      <% } else { %>
+        <div class="avatar">👤</div>
+      <% } %>
+      <h1>
+        <%= userData.username %>
+        <% if (userData.role === 'admin') { %> <span class="badge">👑</span><% } %>
+        <% if (userData.role === 'mod') { %> <span class="badge">🛡️</span><% } %>
+        <% if (userData.banned) { %> <span class="badge-red">🚫</span><% } %>
+      </h1>
+      <div class="stats">
+        <div><b><%= userData.points %></b><span>Puan</span></div>
+        <div><b><%= userData.warning_count %></b><span>⚠️ Uyarı</span></div>
+        <div><b><%= userData.trust_level %></b><span>Güven</span></div>
+      </div>
+      <p style="color: #94a3b8; font-size: 12px;">IP: <%= userData.last_ip || '-' %></p>
+    </div>
+
+    <div class="card">
+      <h3>⚠️ Yeni Uyarı Ver</h3>
+      <form action="/mod/warn/<%= target %>" method="POST">
+        <input name="reason" placeholder="Uyarı sebebi" required>
+        <button class="btn danger">Uyarı Gönder</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>📝 Admin Notu Ekle</h3>
+      <form action="/mod/notes/<%= target %>" method="POST">
+        <textarea name="note" placeholder="Bu kullanıcı hakkında özel not..." rows="2" required></textarea>
+        <button class="btn">Not Ekle</button>
+      </form>
+    </div>
+
+    <h3>⚠️ Uyarı Geçmişi (<%= warnings.length %>)</h3>
+    <% if (warnings.length === 0) { %>
+      <div class="card empty">Uyarı yok.</div>
+    <% } %>
+    <% warnings.forEach(w => { %>
+      <div class="card">
+        <b>👤 <%= w.moderator %></b> → <span class="badge-red">UYARI</span>
+        <p><%= w.reason %></p>
+        <small>🕐 <%= w.date %></small>
+      </div>
+    <% }) %>
+
+    <h3>📝 Admin Notları (<%= notes.length %>)</h3>
+    <% notes.forEach(n => { %>
+      <div class="card">
+        <b>📝 <%= n.moderator %></b>
+        <p><%= n.note %></p>
+        <small>🕐 <%= n.date %></small>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

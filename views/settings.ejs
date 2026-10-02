@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayarlar</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/profile/<%= user %>" class="back-link">← Geri</a>
+
+    <% if (msg) { %>
+      <div class="card <%= msg.includes('yanlis') ? 'error' : 'success' %>">
+        <%= msg.replace(/\+/g, ' ') %>
+      </div>
+    <% } %>
+
+    <div class="card">
+      <h2>⚙️ Hesap Ayarları</h2>
+      <p><b>Kullanıcı adı:</b> <%= userData.username %></p>
+      <p><b>E-posta:</b> <%= userData.email || '-' %></p>
+      <p><b>Rol:</b> <%= userData.role === 'admin' ? '👑 Admin' : 'Kullanıcı' %></p>
+      <p><b>Kayıt tarihi:</b> <%= userData.created_at %></p>
+    </div>
+
+    <div class="card">
+      <h3>🔒 Şifre Değiştir</h3>
+      <form action="/settings/password" method="POST">
+        <input name="oldPass" type="password" placeholder="Eski şifre" required>
+        <input name="newPass" type="password" placeholder="Yeni şifre (min 4)" required>
+        <button class="btn">Şifreyi Değiştir</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>🌙 Tema</h3>
+      <button class="btn secondary" onclick="toggleTheme()">Açık/Karanlık Tema Değiştir</button>
+    </div>
+
+    <div class="card">
+      <h3>🚪 Çıkış</h3>
+      <a href="/logout" class="btn danger">Çıkış Yap</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
+    if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
+  </script>
+</body>
+</html>

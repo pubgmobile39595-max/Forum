@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engellenenler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/friends" class="btn-small">👥 Arkadaşlar</a>
+      <a href="/messages" class="btn-small">💬 Mesajlar</a>
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>🚫 Engellenen Kullanıcılar</h2>
+
+    <% if (blocks.length === 0) { %>
+      <div class="card empty">Kimseyi engellemedin.</div>
+    <% } %>
+    <% blocks.forEach(b => { %>
+      <div class="card user-card">
+        <b>👤 <%= b.blocked %></b>
+        <span style="color: #94a3b8; font-size: 12px;"><%= b.date %></span>
+        <form action="/block/<%= b.blocked %>" method="POST">
+          <button class="btn-tiny">✅ Engeli Kaldır</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

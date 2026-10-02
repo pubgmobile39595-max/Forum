@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moderatör Paneli</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">👑 Mod Panel</a>
+    <div class="nav-right">
+      <a href="/admin" class="btn-small">⚙️ Admin</a>
+      <a href="/" class="btn-small">🏠 Forum</a>
+      <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>👑 Moderatör Paneli</h2>
+
+    <div class="stats-grid">
+      <a href="/mod/reports" class="card stat-card">
+        <b><%= pendingReports %></b>
+        <span>📢 Bekleyen Şikayet</span>
+      </a>
+      <a href="/mod/banned-words" class="card stat-card">
+        <b><%= bannedWordCount %></b>
+        <span>🚫 Yasaklı Kelime</span>
+      </a>
+      <a href="/mod/banned-ips" class="card stat-card">
+        <b><%= bannedIpCount %></b>
+        <span>🌐 Yasaklı IP</span>
+      </a>
+      <a href="/mod/reports" class="card stat-card">
+        <b><%= warningCount %></b>
+        <span>⚠️ Verilen Uyarı</span>
+      </a>
+    </div>
+
+    <h3>🛠️ Moderatör Araçları</h3>
+
+    <a href="/mod/reports" class="card user-card">
+      <b>📢 Şikayetleri Görüntüle</b>
+      <span>Kullanıcı raporlarını incele ve karar ver</span>
+    </a>
+    <a href="/mod/banned-words" class="card user-card">
+      <b>🚫 Yasaklı Kelimeler</b>
+      <span>Spam filtresine kelime ekle</span>
+    </a>
+    <a href="/mod/banned-ips" class="card user-card">
+      <b>🌐 Yasaklı IP Adresleri</b>
+      <span>Kötü niyetli IP'leri engelle</span>
+    </a>
+    <a href="/admin" class="card user-card">
+      <b>👑 Admin Paneli</b>
+      <span>Kullanıcı yönetimi, roller, ban</span>
+    </a>
+  </div>
+</body>
+</html>

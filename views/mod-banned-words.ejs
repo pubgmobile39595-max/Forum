@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yasaklı Kelimeler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/mod" class="btn-small">👑 Mod</a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/mod" class="back-link">← Mod Panel</a>
+    <h2>🚫 Yasaklı Kelimeler</h2>
+
+    <div class="card">
+      <form action="/mod/banned-words" method="POST">
+        <input name="word" placeholder="Yeni yasaklı kelime" required>
+        <button class="btn">➕ Ekle</button>
+      </form>
+    </div>
+
+    <% if (words.length === 0) { %>
+      <div class="card empty">Henüz yasaklı kelime yok.</div>
+    <% } %>
+    <% words.forEach(w => { %>
+      <div class="card user-card">
+        <b>🚫 <%= w.word %></b>
+        <small><%= w.date %></small>
+        <form action="/mod/banned-words/<%= w.id %>/delete" method="POST">
+          <button class="btn-tiny danger">🗑️ Sil</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

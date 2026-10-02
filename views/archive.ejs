@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arşiv</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/" class="btn-small">🏠 Ana Sayfa</a>
+      <a href="/history" class="btn-small">🕐 Geçmiş</a>
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>📦 Arşiv</h2>
+    <% if (posts.length === 0) { %>
+      <div class="card empty">Arşivde konu yok.</div>
+    <% } %>
+    <% posts.forEach(p => { %>
+      <div class="card">
+        <div class="post-header">
+          <a href="/post/<%= p.id %>" class="post-title"><%= p.title %></a>
+          <span class="badge"><%= p.category %></span>
+        </div>
+        <div class="post-footer">
+          <span>👤 <a href="/profile/<%= p.author %>"><%= p.author %></a></span>
+          <span>🕐 <%= p.date %></span>
+          <span>❤️ <%= p.likes %></span>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

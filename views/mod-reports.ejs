@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Şikayetler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/mod" class="btn-small">👑 Mod</a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/mod" class="back-link">← Mod Panel</a>
+    <h2>📢 Şikayetler</h2>
+
+    <% if (reports.length === 0) { %>
+      <div class="card empty">Şikayet yok.</div>
+    <% } %>
+
+    <% reports.forEach(r => { %>
+      <div class="card report-card <%= r.status %>">
+        <div class="post-header">
+          <b>👤 <%= r.reporter %></b>
+          <span class="badge">
+            <% if (r.status === 'pending') { %>⏳ Bekliyor
+            <% } else if (r.status === 'resolved') { %>✅ Çözüldü
+            <% } else { %>❌ Reddedildi
+            <% } %>
+          </span>
+        </div>
+        <p><b>Hedef:</b> <%= r.target_type %> #<%= r.target_id %></p>
+        <p><b>Sebep:</b> <%= r.reason %></p>
+        <p><small>🕐 <%= r.date %></small></p>
+        <div class="actions">
+          <% if (r.status === 'pending') { %>
+            <form action="/mod/reports/<%= r.id %>/resolve" method="POST" style="display:inline">
+              <button class="btn-tiny">✅ Çözüldü</button>
+            </form>
+            <form action="/mod/reports/<%= r.id %>/reject" method="POST" style="display:inline">
+              <button class="btn-tiny danger">❌ Reddet</button>
+            </form>
+          <% } %>
+          <% if (r.target_type === 'post') { %>
+            <a href="/post/<%= r.target_id %>" class="btn-tiny">🔗 Konuya Git</a>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

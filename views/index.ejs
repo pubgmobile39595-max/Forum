@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <button class="menu-toggle" onclick="document.querySelector('.nav-right').classList.toggle('open')">☰</button>
+    <div class="nav-right">
+      <a href="/users" class="btn-small">👥 Üyeler</a>
+      <a href="/leaderboard" class="btn-small">🏆 Liderlik</a>
+      <a href="/activity" class="btn-small">⚡ Aktif</a>
+      <a href="/online" class="btn-small">🟢 Çevrimiçi</a>
+      <a href="/stats" class="btn-small">📊 İstatistik</a>
+      <a href="/following-posts" class="btn-small">👁️ Takiplerim</a>
+      <a href="/history" class="btn-small">🕐 Geçmiş</a>
+      <a href="/archive" class="btn-small">📦 Arşiv</a>
+      <% if (user) { %>
+        <a href="/messages" class="btn-small">💬 Mesajlar</a>
+        <a href="/friends" class="btn-small">👫</a>
+        <a href="/notifications" class="btn-small">🔔 <% if (notifCount > 0) { %><span class="badge-red"><%= notifCount %></span><% } %></a>
+        <% if (isAdmin) { %><a href="/admin" class="btn-small">👑</a><a href="/mod" class="btn-small">🛡️</a><% } %>
+        <a href="/settings" class="btn-small">⚙️</a>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <% if (!user) { %>
+      <div class="grid-2">
+        <div class="card">
+          <h3>🔑 Giriş Yap</h3>
+          <form action="/login" method="POST">
+            <input name="username" placeholder="Kullanıcı adı" required>
+            <input name="password" type="password" placeholder="Şifre" required>
+            <button class="btn">Giriş</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>✨ Kayıt Ol</h3>
+          <form action="/register" method="POST">
+            <input name="username" placeholder="Kullanıcı adı (min 3)" required>
+            <input name="email" type="email" placeholder="E-posta (opsiyonel)">
+            <input name="password" type="password" placeholder="Şifre (min 4)" required>
+            <button class="btn">Kayıt</button>
+          </form>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="card">
+        <h3>✏️ Yeni Konu Aç</h3>
+        <form action="/post" method="POST" enctype="multipart/form-data">
+          <input name="title" placeholder="Başlık" required>
+          <textarea name="content" placeholder="İçerik (Markdown: **kalın** *italik* # başlık)" rows="4" required></textarea>
+          <select name="category">
+            <option>Genel</option>
+            <option>Teknoloji</option>
+            <option>Oyun</option>
+            <option>Sohbet</option>
+            <option>Yardım</option>
+          </select>
+          <input name="tags" placeholder="Etiketler (virgülle ayır: teknoloji,oyun)">
+          <input type="file" name="attachment" accept="image/*,.pdf,.txt,.zip">
+          <details>
+            <summary>📊 Anket Ekle (opsiyonel)</summary>
+            <input name="poll_question" placeholder="Anket sorusu">
+            <textarea name="poll_options" placeholder="Her satıra bir seçenek yazın" rows="3"></textarea>
+          </details>
+          <button class="btn">Paylaş</button>
+        </form>
+      </div>
+    <% } %>
+
+    <div class="card">
+      <form action="/" method="GET" class="search-form">
+        <input name="q" placeholder="🔍 Konu ara..." value="<%= search %>">
+        <button class="btn">Ara</button>
+      </form>
+      <div class="categories">
+        <a href="/" class="cat-tag <%= !activeCategory && !activeTag ? 'active' : '' %>">Tümü</a>
+        <% categories.forEach(c => { %>
+          <a href="/?cat=<%= c.category %>" class="cat-tag <%= activeCategory === c.category ? 'active' : '' %>"><%= c.category %></a>
+        <% }) %>
+      </div>
+      <% if (allTags && allTags.length > 0) { %>
+        <div class="categories">
+          <% allTags.forEach(t => { %>
+            <a href="/?tag=<%= t %>" class="cat-tag <%= activeTag === t ? 'active' : '' %>">#<%= t %></a>
+          <% }) %>
+        </div>
+      <% } %>
+      <div class="sort-tabs">
+        <a href="/?sort=new" class="<%= sort === 'new' ? 'active' : '' %>">🆕 Yeni</a>
+        <a href="/?sort=popular" class="<%= sort === 'popular' ? 'active' : '' %>">🔥 Popüler</a>
+        <a href="/?sort=views" class="<%= sort === 'views' ? 'active' : '' %>">👁️ Görüntülenme</a>
+      </div>
+    </div>
+
+    <h2>📋 Konular</h2>
+    <% if (posts.length === 0) { %>
+      <div class="card empty">Henüz konu yok. İlk konuyu sen aç!</div>
+    <% } %>
+    <% posts.forEach(p => { %>
+      <div class="card post-card">
+        <div class="post-header">
+          <a href="/post/<%= p.id %>" class="post-title">
+            <% if (p.pinned) { %>📌 <% } %>
+            <% if (p.locked) { %>🔒 <% } %>
+            <%= p.title %>
+          </a>
+          <span class="badge"><%= p.category %></span>
+        </div>
+        <p><%= p.content.substring(0, 150) %><%= p.content.length > 150 ? '...' : '' %></p>
+        <% if (p.tags) { %>
+          <div class="post-tags">
+            <% p.tags.split(',').forEach(t => { %>
+              <a href="/?tag=<%= t %>" class="cat-tag">#<%= t %></a>
+            <% }) %>
+          </div>
+        <% } %>
+        <div class="post-footer">
+          <span>👤 <a href="/profile/<%= p.author %>"><%= p.author %></a></span>
+          <span>🕐 <%= p.date %></span>
+          <span>❤️ <%= p.likes %></span>
+          <span>👁️ <%= p.views %></span>
+        </div>
+      </div>
+    <% }) %>
+
+    <% if (totalPages > 1) { %>
+      <div class="pagination">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <a href="/?page=<%= i %><%= search ? '&q='+search : '' %><%= activeCategory ? '&cat='+activeCategory : '' %><%= activeTag ? '&tag='+activeTag : '' %>"
+             class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="scroll-top">↑</button>
+
+  <div class="preview-card" id="previewCard"></div>
+  <div class="shortcuts-help" id="shortcutsHelp">
+    <b>⌨️ Klavye Kısayolları</b>
+    <div><span class="kbd">/</span> Arama</div>
+    <div><span class="kbd">h</span> Ana Sayfa</div>
+    <div><span class="kbd">n</span> Bildirimler</div>
+    <div><span class="kbd">p</span> Profilim</div>
+    <div><span class="kbd">?</span> Bu menü</div>
+  </div>
+  <script>
+    var helpOpen = false;
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === '/') {
+        e.preventDefault();
+        var s = document.querySelector('input[name="q"]');
+        if (s) s.focus();
+      } else if (e.key === 'h') location.href = '/';
+      else if (e.key === 'n') location.href = '/notifications';
+      else if (e.key === '?') {
+        helpOpen = !helpOpen;
+        document.getElementById('shortcutsHelp').classList.toggle('show', helpOpen);
+      }
+    });
+    var previewCard = document.getElementById('previewCard');
+    var hoverTimer;
+    document.querySelectorAll('a[href^="/post/"]').forEach(function(link) {
+      link.addEventListener('mouseenter', function() {
+        var id = link.getAttribute('href').replace('/post/', '').split('/')[0];
+        if (!id || isNaN(id)) return;
+        hoverTimer = setTimeout(function() {
+          fetch('/api/preview/post/' + id)
+            .then(function(r) { return r.json(); })
+            .then(function(p) {
+              if (!p) return;
+              previewCard.innerHTML = '<h4>' + p.title + '</h4><p>' + p.preview + '...</p><div class="meta"><span>👤 ' + p.author + '</span><span>❤️ ' + p.likes + '</span><span>👁️ ' + p.views + '</span></div>';
+              var rect = link.getBoundingClientRect();
+              previewCard.style.top = (window.scrollY + rect.bottom + 8) + 'px';
+              previewCard.style.left = Math.min(rect.left, window.innerWidth - 360) + 'px';
+              previewCard.classList.add('show');
+            });
+        }, 400);
+      });
+      link.addEventListener('mouseleave', function() {
+        clearTimeout(hoverTimer);
+        previewCard.classList.remove('show');
+      });
+    });
+    document.querySelectorAll('.cat-tag').forEach(function(tag, i) {
+      tag.setAttribute('data-tag', i % 8);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+cat > views/messages.ejs << 'EJS'
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesajlar</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/friends" class="btn-small">👥 Arkadaşlar</a>
+      <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>💬 Mesajlar</h2>
+
+    <div class="card">
+      <form action="/messages" method="GET" onsubmit="event.preventDefault(); const u = this.querySelector('input').value.trim(); if (u) location.href='/messages/' + u;">
+        <input placeholder="Kullanıcı adı yazıp Enter'a bas...">
+      </form>
+    </div>
+
+    <% if (conversations.length === 0) { %>
+      <div class="card empty">Henüz mesajın yok.</div>
+    <% } %>
+    <% conversations.forEach(c => { %>
+      <a href="/messages/<%= c.username %>" class="card user-card">
+        <b>👤 <%= c.username %></b>
+        <small><%= c.last_date %></small>
+      </a>
+    <% }) %>
+  </div>
+</body>
+</html>
+EJS

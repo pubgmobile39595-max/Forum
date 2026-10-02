@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çevrimiçi Kullanıcılar</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/users" class="btn-small">👥 Üyeler</a>
+      <a href="/leaderboard" class="btn-small">🏆 Liderlik</a>
+      <a href="/activity" class="btn-small">⚡ Aktif</a>
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>🟢 Çevrimiçi Kullanıcılar (<%= online.length %>)</h2>
+    <p style="color:#94a3b8; font-size:13px; margin-bottom:15px;">Son 5 dakika içinde aktif olanlar</p>
+    <% if (online.length === 0) { %>
+      <div class="card empty">Şu an kimse çevrimiçi değil.</div>
+    <% } %>
+    <% online.forEach(u => { %>
+      <a href="/profile/<%= u.username %>" class="card user-card">
+        <% if (u.avatar) { %>
+          <img src="<%= u.avatar %>" class="user-avatar" style="border: 2px solid #22c55e;">
+        <% } else { %>
+          <div class="user-avatar placeholder" style="border: 2px solid #22c55e;">👤</div>
+        <% } %>
+        <div>
+          <b>👤 <%= u.username %></b>
+          <p style="color:#94a3b8; font-size:12px;">🟢 Şu an çevrimiçi</p>
+          <small>⚡ <%= u.points %> puan</small>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</body>
+</html>

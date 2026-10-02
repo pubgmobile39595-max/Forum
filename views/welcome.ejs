@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum - Giriş</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, Arial, sans-serif;
+      color: #e2e8f0;
+    }
+    .box { max-width: 420px; margin: 40px auto; }
+    .head { text-align: center; margin-bottom: 25px; }
+    .head .logo { font-size: 3.5rem; }
+    .head h1 {
+      color: #38bdf8;
+      font-size: 2.2rem;
+      margin: 8px 0;
+      letter-spacing: -1px;
+    }
+    .head p { color: #94a3b8; margin: 0; }
+    .panel {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 25px;
+    }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: #0f172a;
+      padding: 5px;
+      border-radius: 10px;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+    .tab.on {
+      background: #3b82f6;
+      color: white;
+    }
+    .form { display: none; }
+    .form.on { display: block; }
+    .form h2 {
+      color: #38bdf8;
+      text-align: center;
+      font-size: 1.2rem;
+      margin: 0 0 15px 0;
+    }
+    .inp {
+      width: 100%;
+      padding: 12px 14px;
+      margin: 6px 0;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      color: #e2e8f0;
+      font-size: 15px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .inp:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+    }
+    .submit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    }
+    .submit:hover { opacity: 0.9; }
+    .submit.orange { background: linear-gradient(135deg, #ec4899, #f59e0b); }
+    .feat {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .feat-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    .feat-card b { color: #38bdf8; display: block; font-size: 1.5rem; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="head">
+      <div class="logo">📢</div>
+      <h1>FORUM</h1>
+      <p>Modern forum deneyimi</p>
+    </div>
+
+    <div class="panel">
+      <div class="tabs">
+        <button type="button" class="tab on" id="btn1">🔑 Giriş</button>
+        <button type="button" class="tab" id="btn2">✨ Kayıt</button>
+      </div>
+
+      <div class="form on" id="form1">
+        <h2>Hoş Geldin!</h2>
+        <form action="/login" method="POST">
+          <input class="inp" name="username" placeholder="👤 Kullanıcı adı" required>
+          <input class="inp" name="password" type="password" placeholder="🔒 Şifre" required>
+          <button class="submit" type="submit">🚀 Giriş Yap</button>
+        </form>
+      </div>
+
+      <div class="form" id="form2">
+        <h2>Aramıza Katıl!</h2>
+        <form action="/register" method="POST">
+          <input class="inp" name="username" placeholder="👤 Kullanıcı adı (min 3)" required minlength="3">
+          <input class="inp" name="email" type="email" placeholder="📧 E-posta (opsiyonel)">
+          <input class="inp" name="password" type="password" placeholder="🔒 Şifre (min 4)" required minlength="4">
+          <button class="submit orange" type="submit">✨ Kayıt Ol</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-card"><b>💬</b>Konu & Yorum</div>
+      <div class="feat-card"><b>👥</b>Arkadaşlık</div>
+      <div class="feat-card"><b>🏆</b>Liderlik</div>
+      <div class="feat-card"><b>🎨</b>Modern Tema</div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var btn1 = document.getElementById('btn1');
+      var btn2 = document.getElementById('btn2');
+      var form1 = document.getElementById('form1');
+      var form2 = document.getElementById('form2');
+
+      btn1.addEventListener('click', function() {
+        btn1.classList.add('on');
+        btn2.classList.remove('on');
+        form1.classList.add('on');
+        form2.classList.remove('on');
+      });
+
+      btn2.addEventListener('click', function() {
+        btn2.classList.add('on');
+        btn1.classList.remove('on');
+        form2.classList.add('on');
+        form1.classList.remove('on');
+      });
+    })();
+  </script>
+</body>
+</html>

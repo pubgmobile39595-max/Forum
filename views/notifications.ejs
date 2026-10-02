@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bildirimler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>🔔 Bildirimler</h2>
+
+    <% if (notifs.length === 0) { %>
+      <div class="card empty">Henüz bildirim yok.</div>
+    <% } %>
+
+    <% notifs.forEach(n => { %>
+      <a href="<%= n.link %>" class="card notification-link">
+        <p><%= n.message %></p>
+        <small>🕐 <%= n.date %></small>
+      </a>
+    <% }) %>
+  </div>
+</body>
+</html>

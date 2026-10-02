@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Üyeler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>👥 Üyeler</h2>
+
+    <div class="card">
+      <form action="/users" method="GET" class="search-form">
+        <input name="q" placeholder="🔍 Kullanıcı ara..." value="<%= q %>">
+        <button class="btn">Ara</button>
+      </form>
+    </div>
+
+    <% if (users.length === 0) { %>
+      <div class="card empty">Kullanıcı bulunamadı.</div>
+    <% } %>
+
+    <% users.forEach(u => { %>
+      <a href="/profile/<%= u.username %>" class="card user-card">
+        <% if (u.avatar) { %>
+          <img src="<%= u.avatar %>" class="user-avatar" alt="avatar">
+        <% } else { %>
+          <div class="user-avatar placeholder">👤</div>
+        <% } %>
+        <div>
+          <b><%= u.username %></b>
+          <% if (u.role === 'admin') { %> <span class="badge">👑</span><% } %>
+          <p><%= u.bio || 'Biyografi yok.' %></p>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</body>
+</html>

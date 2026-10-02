@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= post.title %></title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <button class="menu-toggle" onclick="document.querySelector('.nav-right').classList.toggle('open')">☰</button>
+    <div class="nav-right">
+      <a href="/users" class="btn-small">👥 Üyeler</a>
+      <a href="/leaderboard" class="btn-small">🏆</a>
+      <a href="/archive" class="btn-small">📦 Arşiv</a>
+      <% if (user) { %>
+        <a href="/messages" class="btn-small">💬</a>
+        <a href="/friends" class="btn-small">👫</a>
+        <a href="/following-posts" class="btn-small">👁️</a>
+        <a href="/notifications" class="btn-small">🔔 <% if (notifCount > 0) { %><span class="badge-red"><%= notifCount %></span><% } %></a>
+        <% if (isAdmin) { %><a href="/admin" class="btn-small">👑</a><a href="/mod" class="btn-small">🛡️</a><% } %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+
+    <div class="card">
+      <div class="post-header">
+        <h1>
+          <% if (post.pinned) { %>📌 <% } %>
+          <% if (post.locked) { %>🔒 <% } %>
+          <% if (post.boosted) { %>🚀 <% } %>
+          <% if (post.archived) { %>📦 <% } %>
+          <%= post.title %>
+        </h1>
+        <div class="post-badges">
+          <span class="badge"><%= post.category %></span>
+          <% if (post.boosted) { %><span class="post-badge-boosted">🚀 Boost</span><% } %>
+          <% if (post.views > 100) { %><span class="badge">🔥 Sıcak</span><% } %>
+          <% if (post.likes > 20) { %><span class="badge">⭐ Popüler</span><% } %>
+        </div>
+      </div>
+
+      <% if (post.tags) { %>
+        <div class="post-tags">
+          <% post.tags.split(',').forEach(t => { %>
+            <a href="/?tag=<%= t %>" class="cat-tag">#<%= t %></a>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <div class="post-content markdown-body"><%- post.content_html %></div>
+
+      <div class="post-footer">
+        <span>👤 <a href="/profile/<%= post.author %>"><%= post.author %></a></span>
+        <span>🕐 <%= post.date %><% if (post.edited) { %> (düzenlendi)<% } %></span>
+        <span>❤️ <%= post.likes %></span>
+        <span>👁️ <%= post.views %></span>
+      </div>
+
+      <div class="actions">
+        <% if (user) { %>
+          <form action="/like/<%= post.id %>" method="POST" style="display:inline">
+            <button class="btn-small <%= liked ? 'liked' : '' %>">
+              <%= liked ? '💔 Beğeniyi Kaldır' : '❤️ Beğen' %>
+            </button>
+          </form>
+          <form action="/bookmark/<%= post.id %>" method="POST" style="display:inline">
+            <button class="btn-small <%= isBookmarked ? 'liked' : '' %>">
+              <%= isBookmarked ? '🔖 Kaydedildi' : '🔖 Kaydet' %>
+            </button>
+          </form>
+          <form action="/post/<%= post.id %>/follow" method="POST" style="display:inline">
+            <button class="btn-small">👁️ Takip Et / Bırak</button>
+          </form>
+          <form action="/report/post/<%= post.id %>" method="POST" style="display:inline"
+                onsubmit="const r = prompt('Şikayet sebebi:'); if (!r) return false; this.reason.value = r; return true;">
+            <input type="hidden" name="reason">
+            <button class="btn-small">📢 Şikayet</button>
+          </form>
+        <% } %>
+        <% if (user === post.author || isAdmin) { %>
+          <a href="/post/<%= post.id %>/edit" class="btn-small">✏️ Düzenle</a>
+          <form action="/delete/<%= post.id %>" method="POST" style="display:inline"
+                onsubmit="return confirm('Silmek istediğine emin misin?')">
+            <button class="btn-small danger">🗑️ Sil</button>
+          </form>
+        <% } %>
+        <% if (user === post.author && !post.boosted) { %>
+          <form action="/post/<%= post.id %>/boost" method="POST" style="display:inline">
+            <button class="btn-small boost-btn">🚀 Boost (50 puan)</button>
+          </form>
+        <% } %>
+        <% if (isAdmin) { %>
+          <form action="/pin/<%= post.id %>" method="POST" style="display:inline">
+            <button class="btn-small"><%= post.pinned ? '📌 Sabitlemeyi Kaldır' : '📌 Sabitle' %></button>
+          </form>
+          <form action="/lock/<%= post.id %>" method="POST" style="display:inline">
+            <button class="btn-small"><%= post.locked ? '🔓 Kilidi Aç' : '🔒 Kilitle' %></button>
+          </form>
+          <form action="/post/<%= post.id %>/archive" method="POST" style="display:inline">
+            <button class="btn-small"><%= post.archived ? '📦 Arşivden Çıkar' : '📦 Arşivle' %></button>
+          </form>
+        <% } %>
+        <button class="btn-small" onclick="navigator.clipboard.writeText(location.href); this.innerText='✅ Kopyalandı'">🔗 Paylaş</button>
+      </div>
+    </div>
+
+    <% if (typeof pollData !== 'undefined' && pollData) { %>
+      <div class="card poll-card">
+        <h3>📊 <%= pollData.question %></h3>
+        <% const total = pollData.totalVotes || 0; %>
+        <% pollData.options.forEach((opt, i) => { %>
+          <% const count = pollData.voteCounts[i] || 0; %>
+          <% const pct = total > 0 ? Math.round((count/total)*100) : 0; %>
+          <div class="poll-option">
+            <% if (user && pollData.userVote === -1) { %>
+              <form action="/poll/<%= pollData.id %>/vote" method="POST">
+                <input type="hidden" name="option" value="<%= i %>">
+                <button class="btn poll-btn"><%= opt %> — <%= count %> oy (<%= pct %>%)</button>
+              </form>
+            <% } else { %>
+              <div class="poll-bar <%= pollData.userVote === i ? 'voted' : '' %>">
+                <div class="poll-bar-fill" style="width:<%= pct %>%"></div>
+                <span><%= opt %> — <%= count %> oy (<%= pct %>%)</span>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+        <p class="poll-total">Toplam <%= total %> oy</p>
+      </div>
+    <% } %>
+
+    <h3>💬 Yorumlar (<%= comments.length %>)</h3>
+
+    <% if (post.locked) { %>
+      <div class="card empty">🔒 Bu konu kilitli, yorum yapılamaz.</div>
+    <% } else if (user) { %>
+      <div class="card">
+        <form action="/comment/<%= post.id %>" method="POST">
+          <textarea name="content" placeholder="Yorumunu yaz... (@kullanıcı etiketleyebilirsin)" rows="3" required></textarea>
+          <input type="hidden" name="quote_id" value="0">
+          <button class="btn">Gönder</button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="card empty">Yorum yapmak için giriş yapmalısın.</div>
+    <% } %>
+
+    <% comments.forEach(c => { %>
+      <div class="card comment">
+        <div class="comment-header">
+          <b>👤 <a href="/profile/<%= c.author %>"><%= c.author %></a></b>
+          <small><%= c.date %><% if (c.edited) { %> (düzenlendi)<% } %></small>
+        </div>
+        <div class="markdown-body"><%- c.content_html %></div>
+        <div class="comment-actions">
+          <% if (user) { %>
+            <form action="/comment-like/<%= c.id %>" method="POST" style="display:inline">
+              <button class="btn-tiny <%= likedIds.includes(c.id) ? 'liked' : '' %>">
+                ❤️ <%= c.likes %>
+              </button>
+            </form>
+            <form action="/report/comment/<%= c.id %>" method="POST" style="display:inline"
+                  onsubmit="const r = prompt('Şikayet sebebi:'); if (!r) return false; this.reason.value = r; return true;">
+              <input type="hidden" name="reason">
+              <button class="btn-tiny">📢</button>
+            </form>
+          <% } else { %>
+            <span class="btn-tiny">❤️ <%= c.likes %></span>
+          <% } %>
+          <% if (user === c.author || isAdmin) { %>
+            <form action="/comment/<%= c.id %>/delete" method="POST" style="display:inline"
+                  onsubmit="return confirm('Yorumu silmek istediğine emin misin?')">
+              <button class="btn-tiny danger">🗑️</button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+
+    <div class="similar-posts" id="similarPosts"></div>
+  </div>
+
+  <script>
+    fetch('/api/similar/<%= post.id %>')
+      .then(r => r.json())
+      .then(data => {
+        if (data.length > 0) {
+          const box = document.getElementById('similarPosts');
+          box.innerHTML = '<h3>🔗 Benzer Konular</h3>' + data.map(p => 
+            '<a href="/post/' + p.id + '" class="similar-post-item">' +
+            '<b>' + p.title + '</b> — ❤️ ' + p.likes + ' 👁️ ' + p.views +
+            '</a>'
+          ).join('');
+        }
+      })
+      .catch(() => {});
+  </script>
+
+  <div class="preview-card" id="previewCard"></div>
+  <div class="shortcuts-help" id="shortcutsHelp">
+    <b>⌨️ Klavye Kısayolları</b>
+    <div><span class="kbd">/</span> Arama</div>
+    <div><span class="kbd">h</span> Ana Sayfa</div>
+    <div><span class="kbd">n</span> Bildirimler</div>
+    <div><span class="kbd">p</span> Profilim</div>
+    <div><span class="kbd">?</span> Bu menü</div>
+  </div>
+  <script>
+    var helpOpen = false;
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === '/') {
+        e.preventDefault();
+        var s = document.querySelector('input[name="q"]');
+        if (s) s.focus();
+      } else if (e.key === 'h') location.href = '/';
+      else if (e.key === 'n') location.href = '/notifications';
+      else if (e.key === '?') {
+        helpOpen = !helpOpen;
+        document.getElementById('shortcutsHelp').classList.toggle('show', helpOpen);
+      }
+    });
+    var previewCard = document.getElementById('previewCard');
+    var hoverTimer;
+    document.querySelectorAll('a[href^="/post/"]').forEach(function(link) {
+      link.addEventListener('mouseenter', function() {
+        var id = link.getAttribute('href').replace('/post/', '').split('/')[0];
+        if (!id || isNaN(id)) return;
+        hoverTimer = setTimeout(function() {
+          fetch('/api/preview/post/' + id)
+            .then(function(r) { return r.json(); })
+            .then(function(p) {
+              if (!p) return;
+              previewCard.innerHTML = '<h4>' + p.title + '</h4><p>' + p.preview + '...</p><div class="meta"><span>👤 ' + p.author + '</span><span>❤️ ' + p.likes + '</span><span>👁️ ' + p.views + '</span></div>';
+              var rect = link.getBoundingClientRect();
+              previewCard.style.top = (window.scrollY + rect.bottom + 8) + 'px';
+              previewCard.style.left = Math.min(rect.left, window.innerWidth - 360) + 'px';
+              previewCard.classList.add('show');
+            });
+        }, 400);
+      });
+      link.addEventListener('mouseleave', function() {
+        clearTimeout(hoverTimer);
+        previewCard.classList.remove('show');
+      });
+    });
+    document.querySelectorAll('.cat-tag').forEach(function(tag, i) {
+      tag.setAttribute('data-tag', i % 8);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yasaklı IP'ler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/mod" class="btn-small">👑 Mod</a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/mod" class="back-link">← Mod Panel</a>
+    <h2>🌐 Yasaklı IP Adresleri</h2>
+
+    <div class="card">
+      <form action="/mod/banned-ips" method="POST">
+        <input name="ip" placeholder="IP adresi (örn: 192.168.1.1)" required>
+        <input name="reason" placeholder="Sebep (opsiyonel)">
+        <button class="btn">➕ Ekle</button>
+      </form>
+    </div>
+
+    <% if (ips.length === 0) { %>
+      <div class="card empty">Henüz yasaklı IP yok.</div>
+    <% } %>
+    <% ips.forEach(i => { %>
+      <div class="card user-card">
+        <b>🌐 <%= i.ip %></b>
+        <p><%= i.reason || '-' %></p>
+        <small><%= i.date %></small>
+        <form action="/mod/banned-ips/<%= i.id %>/delete" method="POST">
+          <button class="btn-tiny danger">🗑️ Sil</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

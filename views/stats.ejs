@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İstatistikler</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>📊 İstatistikler</h2>
+
+    <div class="stats-grid">
+      <div class="card stat-card"><b><%= userCount %></b><span>👥 Üye</span></div>
+      <div class="card stat-card"><b><%= postCount %></b><span>📝 Konu</span></div>
+      <div class="card stat-card"><b><%= commentCount %></b><span>💬 Yorum</span></div>
+      <div class="card stat-card"><b><%= likeCount %></b><span>❤️ Beğeni</span></div>
+    </div>
+
+    <h3>🏆 En Çok Konu Açanlar</h3>
+    <% topPosters.forEach((u, i) => { %>
+      <div class="card">
+        <b><%= i+1 %>. <a href="/profile/<%= u.author %>"><%= u.author %></a></b>
+        <span><%= u.c %> konu</span>
+      </div>
+    <% }) %>
+
+    <h3>🔥 En Popüler Konular</h3>
+    <% topPosts.forEach((p, i) => { %>
+      <div class="card">
+        <b><%= i+1 %>. <a href="/post/<%= p.id %>"><%= p.title %></a></b>
+        <span>❤️ <%= p.likes %> | 👁️ <%= p.views %></span>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konu Düzenle</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/post/<%= post.id %>" class="back-link">← Geri</a>
+    <div class="card">
+      <h2>✏️ Konuyu Düzenle</h2>
+      <form action="/post/<%= post.id %>/edit" method="POST">
+        <input name="title" value="<%= post.title %>" required>
+        <textarea name="content" rows="8" required><%= post.content %></textarea>
+        <select name="category">
+          <option <%= post.category === 'Genel' ? 'selected' : '' %>>Genel</option>
+          <option <%= post.category === 'Teknoloji' ? 'selected' : '' %>>Teknoloji</option>
+          <option <%= post.category === 'Oyun' ? 'selected' : '' %>>Oyun</option>
+          <option <%= post.category === 'Sohbet' ? 'selected' : '' %>>Sohbet</option>
+          <option <%= post.category === 'Yardım' ? 'selected' : '' %>>Yardım</option>
+        </select>
+        <button class="btn">💾 Kaydet</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

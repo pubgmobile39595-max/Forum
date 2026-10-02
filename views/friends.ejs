@@ -1,0 +1,69 @@
+cat > views/friends.ejs << 'EJS'
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arkadaşlar</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/messages" class="btn-small">💬 Mesajlar</a>
+      <a href="/blocklist" class="btn-small">🚫 Engelliler</a>
+      <a href="/activity" class="btn-small">👥 Aktif</a>
+      <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>👥 Arkadaşlarım (<%= friends.length %>)</h2>
+
+    <% if (friends.length === 0) { %>
+      <div class="card empty">Henüz arkadaşın yok.</div>
+    <% } %>
+    <% friends.forEach(f => { %>
+      <div class="card user-card">
+        <div>
+          <b>👤 <%= f.username %></b>
+        </div>
+        <div class="actions">
+          <a href="/profile/<%= f.username %>" class="btn-tiny">Profil</a>
+          <a href="/messages/<%= f.username %>" class="btn-tiny">💬 Mesaj</a>
+        </div>
+      </div>
+    <% }) %>
+
+    <h2>📥 Gelen İstekler (<%= requests.length %>)</h2>
+    <% if (requests.length === 0) { %>
+      <div class="card empty">Bekleyen istek yok.</div>
+    <% } %>
+    <% requests.forEach(r => { %>
+      <div class="card user-card">
+        <b>👤 <%= r.sender %></b>
+        <div class="actions">
+          <form action="/friend-accept/<%= r.id %>" method="POST" style="display:inline">
+            <button class="btn-tiny">✅ Kabul</button>
+          </form>
+          <form action="/friend-reject/<%= r.id %>" method="POST" style="display:inline">
+            <button class="btn-tiny danger">❌ Reddet</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+
+    <h2>📤 Gönderilen İstekler (<%= sent.length %>)</h2>
+    <% sent.forEach(s => { %>
+      <div class="card user-card">
+        <b>👤 <%= s.receiver %></b>
+        <span class="badge">Bekliyor</span>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>
+EJS

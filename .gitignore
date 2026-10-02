@@ -1,0 +1,8 @@
+node_modules/
+forum.log
+*.db
+*.db-journal
+.env
+.DS_Store
+public/uploads/*
+!public/uploads/.gitkeep

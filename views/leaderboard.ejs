@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liderlik Tablosu</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/activity" class="btn-small">👥 Aktif</a>
+      <a href="/stats" class="btn-small">📊 İstatistik</a>
+      <a href="/users" class="btn-small">👥 Üyeler</a>
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>🏆 Liderlik Tablosu</h2>
+
+    <% if (users.length === 0) { %>
+      <div class="card empty">Henüz kullanıcı yok.</div>
+    <% } %>
+
+    <% users.forEach((u, i) => { %>
+      <a href="/profile/<%= u.username %>" class="card user-card <%= i < 3 ? 'top-rank' : '' %>">
+        <div class="rank">
+          <% if (i === 0) { %>🥇
+          <% } else if (i === 1) { %>🥈
+          <% } else if (i === 2) { %>🥉
+          <% } else { %>#<%= i+1 %>
+          <% } %>
+        </div>
+        <div>
+          <b>👤 <%= u.username %></b>
+          <p>⚡ <%= u.points %> puan</p>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</body>
+</html>

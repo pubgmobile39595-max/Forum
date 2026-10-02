@@ -1,0 +1,51 @@
+cat > views/activity.ejs << 'EJS'
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aktif Kullanıcılar</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/friends" class="btn-small">👥 Arkadaşlar</a>
+      <a href="/messages" class="btn-small">💬 Mesajlar</a>
+      <a href="/leaderboard" class="btn-small">🏆 Liderlik</a>
+      <% if (user) { %>
+        <a href="/profile/<%= user %>" class="btn-small">👤 <%= user %></a>
+        <a href="/logout" class="btn-small danger">Çıkış</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <a href="/" class="back-link">← Geri</a>
+    <h2>👥 Son 24 Saatte Aktif (<%= activeUsers.length %>)</h2>
+
+    <% if (activeUsers.length === 0) { %>
+      <div class="card empty">Son 24 saatte aktif kullanıcı yok.</div>
+    <% } %>
+    <% activeUsers.forEach(u => { %>
+      <a href="/profile/<%= u.username %>" class="card user-card">
+        <b>👤 <%= u.username %></b>
+        <span>⚡ <%= u.points %> puan</span>
+        <small><%= u.last_login %></small>
+      </a>
+    <% }) %>
+
+    <h2>🏆 En Aktif Kullanıcılar</h2>
+    <% topUsers.forEach((u, i) => { %>
+      <a href="/profile/<%= u.username %>" class="card user-card">
+        <b><%= i+1 %>. 👤 <%= u.username %></b>
+        <span>⚡ <%= u.points %> puan</span>
+        <span>📝 <%= u.post_count %> konu</span>
+        <span>💬 <%= u.comment_count %> yorum</span>
+      </a>
+    <% }) %>
+  </div>
+</body>
+</html>
+EJS

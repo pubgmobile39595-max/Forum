@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= otherUser.username %> ile Sohbet</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">📢 Forum</a>
+    <div class="nav-right">
+      <a href="/messages" class="btn-small">← Mesajlar</a>
+      <a href="/profile/<%= otherUser.username %>" class="btn-small">👤 <%= otherUser.username %></a>
+      <a href="/logout" class="btn-small danger">Çıkış</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>💬 <%= otherUser.username %></h2>
+
+    <% if (isBlocked) { %>
+      <div class="card error">🚫 Bu kullanıcıyla mesajlaşamazsın.</div>
+    <% } else { %>
+      <div class="chat-box" id="chatBox">
+        <% messages.forEach(m => { %>
+          <div class="chat-msg <%= m.sender === user ? 'mine' : 'theirs' %>">
+            <b><%= m.sender %></b>
+            <p><%= m.content %></p>
+            <small><%= m.date %></small>
+          </div>
+        <% }) %>
+        <% if (messages.length === 0) { %>
+          <p class="empty" style="text-align: center; color: #94a3b8;">Henüz mesaj yok. İlk mesajı sen gönder!</p>
+        <% } %>
+      </div>
+
+      <div class="card">
+        <form action="/messages/<%= otherUser.username %>" method="POST">
+          <textarea name="content" placeholder="Mesaj yaz..." rows="2" required></textarea>
+          <button class="btn">📤 Gönder</button>
+        </form>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chatBox');
+    if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+  </script>
+</body>
+</html>
